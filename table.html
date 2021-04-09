@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body style="padding: 3%;">
+    <header align="center">
+      <h1>Electronics SmartPhone Details</h1>
+    </header>
+    <!-- Here a loader is created which 
+             loads till response comes -->
+             <div class="d-flex justify-content-center">
+              <div class="spinner-border" role="status" id="loading">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+    <!-- table for showing data -->
+    <table id="SmartPhone" class="table table-bordered"></table>
+  </body>
+  <script>
+    // api url
+    const api_url = "/getAll";
+
+    // Defining async function
+    async function getapi(url) {
+      // Storing response
+      const response = await fetch(url);
+
+      // Storing data in form of JSON
+      var data = await response.json();
+      console.log(data);
+      if (response) {
+        hideloader();
+      }
+      show(data);
+    }
+    // Calling that async function
+    getapi(api_url);
+
+    // Function to hide the loader
+    function hideloader() {
+      document.getElementById("loading").style.display = "none";
+    }
+    // Function to define innerHTML for HTML table
+    function show(data) {
+      let table = `<tr class="thead-dark">
+		<th>Name</th>
+		<th>Variant</th>
+		<th>Price</th>
+		<th>Description</th>
+		</tr>`;
+
+      // Loop to access all rows
+      for (let r of data) {
+        table += `<tr>
+	<td>${r.name} </td>
+	<td>${r.variants}</td>
+	<td>${r.price}</td>
+	<td>${r.description}</td>		
+</tr>`;
+      }
+      // Setting innerHTML as tab variable
+      document.getElementById("SmartPhone").innerHTML = table;
+    }
+  </script>
+</html>

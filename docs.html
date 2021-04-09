@@ -1,0 +1,225 @@
+<html>
+  <head>
+    <title>Docs</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body style="padding: 3%;">
+    <header style="padding-top: 1%;">
+        <h1 align="center">ApiDocs</h1>
+        <hr />
+    </header>
+    <div style="padding-left: 1%;">
+        <h3><u>Notes</u></h3>
+        <br />
+        <p>
+            This is a very basic and simple general-purpose RESTful MongoDB CRUD API implemented using PyMongo and Flask.
+        </p>
+        <p>
+            All parameters are included as json objects.
+            No authorization necessary.
+        </p>
+    </div>
+    <div>
+      <table style="width: 100%" class="table table-bordered">
+        <!-- Header row -->
+        <tr class="thead-light">
+          <th>Name</th>
+          <th>Endpoint</th>
+          <th>Request Type</th>
+          <th>Description</th>
+          <th>Parameters</th>
+          <th>Sample Request</th>
+          <th style="width: 110px">Sample Response</th>
+        </tr>
+        <!-- Data rows start here -->
+        <tr>
+          <td>Get All</td>
+          <td><code>/getAll</code></td>
+          <td>GET</td>
+          <td>Get all data from collection</td>
+          <td><i>None</i></td>
+          <td><code>curl --location --request GET '{baseURI}/getAll'</code></td>
+          <td>
+            <pre>
+[
+    {
+        "_id": "607030e8c02de39412c4bcf7",
+        "description": "2 GB RAM | 32 GB ROM | Expandable Upto 256 GB",
+        "name": "realme C11 (Rich Green, 32 GB)",
+        "price": "8999",
+        "variants": "32 GB"
+    },
+    {
+        "_id": "607030e8c02de39412c4bcf8",
+        "description": "This description has been updated",
+        "name": "REDMI 9i (Sea Blue, 64 GB)",
+        "price": "9999",
+        "variants": "64 GB"
+    }
+]
+        </pre
+            >
+          </td>
+        </tr>
+
+        <tr>
+          <td>Get</td>
+          <td><code>/get</code></td>
+          <td>GET</td>
+          <td>Get a document by ObjectId</td>
+          <td>
+            <table class="table table-bordered">
+              <tr>
+                <td><code>oid</code></td>
+                <td><code>string</code></td>
+              </tr>
+            </table>
+          </td>
+          <td>
+            <code
+              >curl --location --request GET '{baseURI}/get'
+              --header 'Content-Type: application/json' --data-raw
+              '{"oid":607030e8c02de39412c4bcf8"}'</code
+            >
+          </td>
+          <td>
+              <table>
+                    <tr>
+                        <td>Normal response</td>
+                        <td><pre>
+{
+    "_id": "607030e8c02de39412c4bcf8",
+    "description": "This description has been updated",
+    "name": "REDMI 9i (Sea Blue, 64 GB)",
+    "price": "9999",
+    "variants": "64 GB"
+}
+                        </pre></td>
+                    </tr>
+                    <tr>
+                        <td>ObjectId invalid</td>
+                        <td><pre>
+{
+    "msg": "Invalid ObjectId, must be a 24-character hex string."
+}
+                        </pre></td>
+                    </tr>
+                    <tr>
+                        <td>Document does not exist</td>
+                        <td><pre>
+{
+    "msg": "An error occured. ObjectId not found. Check if your ObjectId is valid."
+}
+                        </pre></td>
+                    </tr>
+                </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Insert</td>
+          <td><code>/insert</code></td>
+          <td>POST</td>
+          <td>Insert one or more documents into the collection</td>
+          <td>
+            <table class="table table-bordered">
+              <tr>
+                <p>Send an array of json objects.</p>
+                <p>
+                  For inserting a single document, send an array with a single
+                  json body.
+                </p>
+              </tr>
+            </table>
+          </td>
+          <td>
+            <code>
+              curl --location --request POST '{baseURI}/insert'
+              --header 'Content-Type: application/json' --data-raw '[ {
+              "Sample_Doc1_Key1": "Value1", "Sample_Doc1_Key2": "Value2",
+              "Sample_Doc1_Key3": "Value3" }, { "Sample_Doc2_Key1": "Value1",
+              "Sample_Doc2_Key2": "Value2", "Sample_Doc2_Key3": "Value3" } ]'
+            </code>
+          </td>
+          <td>
+            <pre>
+{
+    "inserted_oids": "[ObjectId('60705d3e709b8f6bab76ae35'), ObjectId('60705d3e709b8f6bab76ae36')]"
+}
+            </pre>
+          </td>
+        </tr>
+
+        <tr>
+            <td>Update</td>
+            <td><code>/update</code></td>
+            <td>PUT</td>
+            <td>Update a document by ObjectId</td>
+            <td>
+              <table class="table table-bordered">
+                <tr>
+                  <td><code>oid</code></td>
+                  <td><code>string</code></td>
+                </tr>
+                <tr>
+                    <td><code>newvalues</code></td>
+                    <td>A valid json object</td>
+                </tr>
+              </table>
+              To overwrite existing keys; simply specify a new value for them in <code>newvalues</code> json.
+            </td>
+            <td>
+              <code>
+                curl --location --request PUT '{baseURI}/update' --header 'Content-Type: application/json' --data-raw '{
+                    "oid": "60705d3e709b8f6bab76ae35",
+                    "newvalues": {
+                        "updated_value": "This is an updated value"
+                    }
+                }'
+              </code>
+            </td>
+            <td>
+              <pre>
+{
+    "msg": "Update request received. Check status by querying /get with ObjectId."
+}
+              </pre>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Delete</td>
+            <td><code>/delete</code></td>
+            <td>DELETE</td>
+            <td>Delete a document by ObjectId</td>
+            <td>
+              <table class="table table-bordered">
+                <tr>
+                  <td><code>oid</code></td>
+                  <td><code>string</code></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <code>
+                curl --location --request DELETE '{baseURI}/delete' --header 'Content-Type: application/json' --data-raw '{
+                    "oid": "60705d3e709b8f6bab76ae35"
+                }'
+              </code>
+            </td>
+            <td>
+              <pre>
+{
+    "msg": "Delete request received. Check status by querying /get with ObjectId."
+}
+              </pre>
+            </td>
+          </tr>
+        <!-- End rows -->
+      </table>
+    </div>
+  </body>
+</html>
